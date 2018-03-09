@@ -28,7 +28,7 @@ int binarySearch( const int* mas, int elem, int start, int end)  // находи
  * ищет наиболее "похожий" элемент*/
 int search(const int* mas, int elem, int size){
     int current = 1;
-    while (mas[current] < elem && current < size){
+    while (current < size && mas[current] < elem){
         current *= 2;
     }
     // теперь элемент находится между current/2 и current
