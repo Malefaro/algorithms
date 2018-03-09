@@ -2,7 +2,7 @@
 #include <algorithm>
 using namespace std;
 
-int binarySearch( const int* mas, int elem, int start, int end)
+int binarySearch( const int* mas, int elem, int start, int end)  // находит индекс ближайшего по значению элемента
 {
     if (start == end && mas[start] == elem)
         return 0;
@@ -24,14 +24,15 @@ int binarySearch( const int* mas, int elem, int start, int end)
 }
 
 
-
+/*Поиск: сначала выполняется приближенный поиск элемента в массиве(по степеням двойки) И затем бинарным поиском в оставшемся массиве
+ * ищет наиболее "похожий" элемент*/
 int search(const int* mas, int elem, int size){
     int current = 1;
     while (mas[current] < elem && current < size){
         current *= 2;
     }
-    // теперь элемент находится между current-1 и current
-    if (current > size-1)
+    // теперь элемент находится между current/2 и current
+    if (current > size-1) // если current Больше размера массива
         current = size-1;
     return binarySearch(mas, elem, current/2, current);
 
