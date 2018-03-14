@@ -32,9 +32,9 @@ int search(const int* mas, int elem, int size){
         current *= 2;
     }
     // теперь элемент находится между current/2 и current
-    if (current > size-1) // если current Больше размера массива
-        current = size-1;
-    return binarySearch(mas, elem, current/2, current);
+    // if (current > size-1) // если current Больше размера массива
+    //     current = size-1;
+    return binarySearch(mas, elem, current/2, current > (size - 1) ? (size-1) : current);
 
 }
 
