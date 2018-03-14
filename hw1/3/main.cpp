@@ -19,6 +19,11 @@ public:
 
     bool IsEmpty() const { return head == tail; }
 
+/*
+
+ПЕРЕДЕЛАТЬ GET_SIZE()!!
+
+*/
     int get_size() const // возвращает реальное количество элементов лежащих в массиве
     {
         int i = 0;

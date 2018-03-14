@@ -60,15 +60,15 @@ void printMas(int* mas, int size){
 int main() {
     int n = 0;
     int m = 0;
-    cout << "enter A size" << endl;
+    //cout << "enter A size" << endl;
     cin >> n;
     int* A = new int[n];
-    cout << "enter A" << endl;
+    //cout << "enter A" << endl;
     readMas(A,n);
-    cout << "enter B size" << endl;
+    //cout << "enter B size" << endl;
     cin >> m;
     int* B = new int[m];
-    cout << "enter B" << endl;
+    //cout << "enter B" << endl;
     readMas(B,m);
     sort(A,A+n);
     for (int i = 0; i < m; ++i){
