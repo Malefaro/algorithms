@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-#define STEP 10 // константа задающая минимальный размер bufSize при котором его можно ресайзить в случае малой заполниности
+#define STEP 6 // константа задающая минимальный размер bufSize при котором его можно ресайзить в случае малой заполниности
 
 //3_1. Реализовать очередь с динамическим зацикленным буфером.
 
@@ -26,11 +26,7 @@ public:
 */
     int get_size() const // возвращает реальное количество элементов лежащих в массиве
     {
-        int i = 0;
-        while ( (head + i)% bufSize != tail ) {
-            ++i;
-        }
-        return i;
+        return (tail-head) % bufSize;
     }
     void Push( int a )
     {
@@ -59,19 +55,19 @@ public:
             return -1;
         int result = buf[head];
         head = ( head + 1 ) % bufSize;
-//        if (bufSize > STEP && get_size() < bufSize/4 ){ // если массив относительно пустой уменьшим его.
-//            int* tmp = new int[bufSize/2];
-//            int i = 0;
-//            for (i = 0; i < get_size(); ++i){
-//                tmp[i] = buf[(head+i) % bufSize];
-//            }
-//            delete [] buf;
-//            buf = tmp;
-//            bufSize /= 2;
-//            head = 0;
-//            tail = i;
-//            tail = (tail) % bufSize;
-//        }
+        if (bufSize > STEP && get_size() < bufSize/4 ){ // если массив относительно пустой уменьшим его.
+            int* tmp = new int[bufSize/2];
+            int i = 0;
+            for (i = 0; i < get_size(); ++i){
+                tmp[i] = buf[(head+i) % bufSize];
+            }
+            delete [] buf;
+            buf = tmp;
+            bufSize /= 2;
+            head = 0;
+            tail = i;
+            tail = (tail) % bufSize;
+        }
         return result;
     }
 private:
