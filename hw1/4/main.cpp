@@ -10,11 +10,12 @@ public:
     int time_out;
 };
 
+template <class T>
 class Heap {
 public:
     Heap() : buf(nullptr), bufSize(STARTSIZE), size(0) {}
     Heap(int size = 1);
-    Heap(int* arr, int size);
+    Heap(T* arr, int size);
     ~Heap();
     int GetMax() const; // просто посмотреть  O(1)
     int ExtractMax(); // извлекает O(logN)
@@ -22,22 +23,24 @@ public:
     bool IsEmpty() const;
     void printHeap();
 private:
-    int* buf;
+    T* buf;
     int bufSize;
     int size;
     void siftup(int index);
     void siftdown(int index);
 };
 
-Heap::Heap(int size) : bufSize(size), size(0)
+template <class T>
+Heap<T>::Heap(int size) : bufSize(size), size(0)
 {
-    buf = new int[size];
+    buf = new T[size];
 }
 
+template <class T>
+Heap<T>::~Heap() { delete [] buf; }
 
-Heap::~Heap() { delete [] buf; }
-
-void Heap::siftup(int index)
+template <class T>
+void Heap<T>::siftup(int index)
 {
     assert(index >= 0 && index < bufSize);
     while (index > 0){
@@ -48,8 +51,8 @@ void Heap::siftup(int index)
         index = parent;
     }
 }
-
-void Heap::siftdown(int index)
+template <class T>
+void Heap<T>::siftdown(int index)
 {
    // assert(index >= 0 && index < bufSize);
     while(index < size){
@@ -66,13 +69,13 @@ void Heap::siftdown(int index)
         } else return;
     }
 }
-
-Heap::Heap(int *arr, int s)
+template <class T>
+Heap<T>::Heap(T *arr, int s)
 {
     assert(arr && s > 0);
     size = s;
     bufSize = s*2;
-    buf = new int[bufSize];
+    buf = new T[bufSize];
 
     for (int i = 0; i < s; ++i)
         buf[i] = arr[i];
@@ -86,26 +89,28 @@ Heap::Heap(int *arr, int s)
         i /= 2;
     }
 }
-
-void Heap::printHeap()
+template <class T>
+void Heap<T>::printHeap()
 {
     for (int i = 0; i < size; ++i)
         cout << buf[i] << ' ';
     cout << endl;
 }
 
-int Heap::GetMax() const
+template <class T>
+int Heap<T>::GetMax() const
 {
     return buf[0];
 }
 
-void Heap::Add(int value)
+template <class T>
+void Heap<T>::Add(int value)
 {
     buf[size] = value;
     ++size;
     if (size == bufSize){
         bufSize *= 2;
-        int* tmp = new int[bufSize];
+        T* tmp = new T[bufSize];
         for (int i = 0; i< size; ++i)
             tmp[i] = buf[i];
         delete [] buf;
@@ -114,12 +119,14 @@ void Heap::Add(int value)
     siftup(size-1);
 }
 
-bool Heap::IsEmpty() const
+template <class T>
+bool Heap<T>::IsEmpty() const
 {
     return size == 0;
 }
 
-int Heap::ExtractMax()
+template <class T>
+int Heap<T>::ExtractMax()
 {
     assert( !IsEmpty() );
     int max = buf[0];
@@ -132,7 +139,7 @@ int Heap::ExtractMax()
 int main() {
     //int mas[10] = {16, 11,6, 10,5,9,8,1,2,4};
     int mas[10] = {1,2,4,10,5,6,8,11,9,16};
-    Heap h(mas,10);
+    Heap<int> h(mas,10);
     h.printHeap();
 //    for (int i = 0; i < 12; ++i){
 //        h.Add(i);
