@@ -6,22 +6,48 @@ using namespace std;
 
 class train {
 public:
+    train(): time_in(0), time_out(0) {}
     int time_in;
     int time_out;
+    train& operator = (const train& other){
+        this->time_in = other.time_in;
+        this->time_out = other.time_out;
+    }
+    friend std::ostream& operator << (std::ostream& os, train const& obj){
+        return os << obj.time_in << ' ' << obj.time_out << " ; ";
+    }
 };
+
+bool operator > (const train& t1,const train& t2){
+    return t1.time_out < t2.time_out;
+}
+bool operator == (const train& t1, const train& t2){
+    return t1.time_out == t2.time_out;
+}
+bool operator < (const train& t1, const train& t2){
+    return t2 > t1;
+}
+bool operator >= (const train& t1, const train& t2){
+    return !(t2 > t1);
+}
+bool operator <= (const train& t1, const train& t2){
+    return !(t1 > t2);
+}
+
 
 template <class T>
 class Heap {
 public:
-    Heap() : buf(nullptr), bufSize(STARTSIZE), size(0) {}
-    Heap(int size = 1);
+    Heap() : buf(new T[STARTSIZE]), bufSize(STARTSIZE), size(0) {}
+    Heap(int size);
     Heap(T* arr, int size);
     ~Heap();
-    int GetMax() const; // просто посмотреть  O(1)
-    int ExtractMax(); // извлекает O(logN)
-    void Add(int value); // O(log(N))
+    T GetMax() const; // просто посмотреть  O(1)
+    T ExtractMax(); // извлекает O(logN)
+    void Add(T& value); // O(log(N))
     bool IsEmpty() const;
     void printHeap();
+    int get_size(){ return size;}
 private:
     T* buf;
     int bufSize;
@@ -54,7 +80,7 @@ void Heap<T>::siftup(int index)
 template <class T>
 void Heap<T>::siftdown(int index)
 {
-   // assert(index >= 0 && index < bufSize);
+    assert(index >= 0 && index < bufSize);
     while(index < size){
         int max = index;
         int left = 2*index + 1;
@@ -98,13 +124,13 @@ void Heap<T>::printHeap()
 }
 
 template <class T>
-int Heap<T>::GetMax() const
+T Heap<T>::GetMax() const
 {
     return buf[0];
 }
 
 template <class T>
-void Heap<T>::Add(int value)
+void Heap<T>::Add(T& value)
 {
     buf[size] = value;
     ++size;
@@ -126,10 +152,10 @@ bool Heap<T>::IsEmpty() const
 }
 
 template <class T>
-int Heap<T>::ExtractMax()
+T Heap<T>::ExtractMax()
 {
     assert( !IsEmpty() );
-    int max = buf[0];
+    T max = buf[0];
     buf[0] = buf[size--];
     if ( !IsEmpty() )
         siftdown(0);
@@ -137,15 +163,32 @@ int Heap<T>::ExtractMax()
 }
 
 int main() {
-    //int mas[10] = {16, 11,6, 10,5,9,8,1,2,4};
-    int mas[10] = {1,2,4,10,5,6,8,11,9,16};
-    Heap<int> h(mas,10);
-    h.printHeap();
+//    //int mas[10] = {16, 11,6, 10,5,9,8,1,2,4};
+//    int mas[10] = {1,2,4,10,5,6,8,11,9,16};
+//    Heap<int> h(mas,10);
+//    h.printHeap();
 //    for (int i = 0; i < 12; ++i){
 //        h.Add(i);
 //    }
-    h.printHeap();
-    h.ExtractMax();
-    h.printHeap();
+//    h.printHeap();
+//    h.ExtractMax();
+//    h.printHeap();
+    int count = 0;
+    int maxTup = 0;
+    cin >> count;
+    Heap<train> h;
+    train t;
+    for (int i = 0; i < count; ++i){
+        cin >> t.time_in >> t.time_out;
+        if(! h.IsEmpty() ) {
+            while(h.GetMax().time_out < t.time_in)
+                h.ExtractMax();
+        }
+        h.Add(t);
+        if (h.get_size() > maxTup)
+            maxTup = h.get_size();
+       // h.printHeap();
+    }
+    cout << maxTup << endl;
     return 0;
 }
