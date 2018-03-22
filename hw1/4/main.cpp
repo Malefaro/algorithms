@@ -4,6 +4,19 @@
 #define STARTSIZE 10
 using namespace std;
 
+
+/*
+На вокзале есть некоторое количество тупиков, куда прибывают электрички. Этот вокзал является их конечной станцией.
+ Дано расписание движения электричек, в котором для каждой электрички указано время ее прибытия, а также время отправления в следующий рейс.
+ Электрички в расписании упорядочены по времени прибытия. Когда электричка прибывает, ее ставят в свободный тупик с минимальным номером.
+ При этом если электричка из какого-то тупика отправилась в момент времени X, то электричку, которая прибывает в момент времени X,
+ в этот тупик ставить нельзя, а электричку, прибывающую в момент X+1 — можно.
+В данный момент на вокзале достаточное количество тупиков для работы по расписанию.
+Напишите программу, которая по данному расписанию определяет, какое минимальное количество тупиков требуется для работы вокзала.
+Формат входных данных. Вначале вводится n - количество электричек в расписании. Затем вводится n строк для каждой электрички,
+ в строке - время прибытия и время отправления. Время - натуральное число от 0 до 10^9. Строки в расписании упорядочены по времени прибытия.
+ */
+
 class train {
 public:
     train(): time_in(0), time_out(0) {}
@@ -68,7 +81,7 @@ Heap<T>::~Heap() { delete [] buf; }
 template <class T>
 void Heap<T>::siftup(int index)
 {
-    assert(index >= 0 && index < bufSize);
+    //assert(index >= 0 && index < bufSize);
     while (index > 0){
         int parent = (index-1)/2;
         if (buf[index] <= buf[parent])
@@ -80,7 +93,7 @@ void Heap<T>::siftup(int index)
 template <class T>
 void Heap<T>::siftdown(int index)
 {
-    assert(index >= 0 && index < bufSize);
+    //assert(index >= 0 && index < bufSize);
     while(index < size){
         int max = index;
         int left = 2*index + 1;
@@ -98,7 +111,7 @@ void Heap<T>::siftdown(int index)
 template <class T>
 Heap<T>::Heap(T *arr, int s)
 {
-    assert(arr && s > 0);
+    //assert(arr && s > 0);
     size = s;
     bufSize = s*2;
     buf = new T[bufSize];
@@ -155,8 +168,10 @@ template <class T>
 T Heap<T>::ExtractMax()
 {
     assert( !IsEmpty() );
+    //if (IsEmpty())
+    //    return T();
     T max = buf[0];
-    buf[0] = buf[size--];
+    buf[0] = buf[--size];
     if ( !IsEmpty() )
         siftdown(0);
     return max;
@@ -167,12 +182,14 @@ int main() {
 //    int mas[10] = {1,2,4,10,5,6,8,11,9,16};
 //    Heap<int> h(mas,10);
 //    h.printHeap();
-//    for (int i = 0; i < 12; ++i){
-//        h.Add(i);
-//    }
+////    for (int i = 0; i < 12; ++i){
+////        h.Add(i);
+////    }
 //    h.printHeap();
 //    h.ExtractMax();
 //    h.printHeap();
+
+
     int count = 0;
     int maxTup = 0;
     cin >> count;
@@ -180,10 +197,14 @@ int main() {
     train t;
     for (int i = 0; i < count; ++i){
         cin >> t.time_in >> t.time_out;
-        if(! h.IsEmpty() ) {
-            while(h.GetMax().time_out < t.time_in)
-                h.ExtractMax();
+        if (t.time_in > t.time_out) {
+            cerr << "tin > tout";
+            return 0;
         }
+
+        while(!h.IsEmpty() && h.GetMax().time_out < t.time_in)
+            h.ExtractMax();
+
         h.Add(t);
         if (h.get_size() > maxTup)
             maxTup = h.get_size();
