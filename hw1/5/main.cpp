@@ -20,8 +20,10 @@ bool IsLessDefault (const T& l, const T& r){
 template<class T, class Compare>
 void merge(T* a1, int l1, T* a2, int l2, T*& c, Compare cmp )
 {
-    if (a2 == nullptr || l2 == 0)
+    if (a2 == nullptr || l2 <= 0) {
+        c[0] = a1[0];
         return;
+    }
     int i = 0;
     int j = 0;
     int k = 0;
@@ -54,14 +56,17 @@ void mergeSort(T* arr, int l, int r,Compare cmp)
     while (i < r-l+1){
         int k =0;
         while( k < (r-l + 1) / i ) {
-            T *c = new T[2 * i];
-            merge(arr + i * (k++), i, arr + i * (k++), i, c, cmp);
+            int size = 2 * i +i*k < (r-l+1) ? 2*i : (r-i*k +1);
+            T *c = new T[size];
+            merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
+            k+=2;
             memcpy(arr+i*(k-2), c, sizeof(T) * 2 * i);
             delete[] c;
         }
         i *= 2;
     }
-};
+}; // i * (k++) < r ? k : r - i * (k)
+//arr + i * (k), i, arr + ( (i * (k+1)) < r ? (k+1) : (r - i * (k+1)) ), i, c, cmp
 
 template<class T>
 class IsLess{
@@ -72,7 +77,7 @@ private:
 };
 
 int main() {
-    int mas1[8] = {11,2,5,6,3,8,7,1};
+    int mas1[] = {11,2,5,6,3,8,7,1};
     int mas2[3] = {2,4,7};
 //    int mas1[1] = {2};
 //    int mas2[1] = {1};
