@@ -56,9 +56,16 @@ void mergeSort(T* arr, int l, int r,Compare cmp)
     while (i < r-l+1){
         int k =0;
         while( k < (r-l + 1) / i ) {
-            int size = 2 * i +i*k < (r-l+1) ? 2*i : (r-i*k +1);
+            //int size = 2 * i +i*k < (r-l+1) ? 2*i : (r-i*k +1);
+            int size1 = i*k+i < (r-l+1) ? i : (r-i*k);
+            size1 = size1 > 0 ? size1 : 0;
+            int size2 = i*k+2*i < (r-l+1) ? i : (r - i*k - i + 1);
+            if (size1 < i)
+                size2 = 0;
+            int size = size1+size2;
             T *c = new T[size];
-            merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
+            //merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
+            merge(arr + size1 * (k), size1, arr + size1 * (k+1), size2, c, cmp);
             k+=2;
             memcpy(arr+i*(k-2), c, sizeof(T) * size);
             delete[] c;
@@ -99,7 +106,7 @@ bool IsLessClient (const Client& obj1,const Client& obj){
 }
 
 template<class T>
-int printArr(T* arr , int size){
+int printArr(const T* arr , int size){
     for (int i = 0; i<size; ++i)
         cout << arr[i] << ' ';
 }
@@ -202,3 +209,56 @@ int main() {
 5 13
 3
 */
+
+/*10
+1 10
+1 10
+2 10
+3 10
+4 10
+2 10
+1 11
+9 10
+10 12
+11 13
+*/
+
+/*
+15
+1 10
+2 10
+3 10
+7 10
+4 10
+2 10
+3 10
+9 10
+10 16
+11 16
+2 16
+4 20
+3 11
+22 26
+15 16
+ */
+
+/*18
+1 10
+2 10
+3 10
+4 10
+5 10
+6 10
+7 10
+1 11
+2 11
+3 11
+4 11
+5 11
+6 7
+7 8
+9 10
+2 10
+3 22
+22 25
+ 7*/
