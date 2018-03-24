@@ -53,24 +53,40 @@ void mergeSort(T* arr, int l, int r,Compare cmp)
     int i = 1;
 
 
-    while (i < r-l+1){
-        int k =0;
-        while( k < (r-l + 1) / i ) {
-            //int size = 2 * i +i*k < (r-l+1) ? 2*i : (r-i*k +1);
-            int size1 = i*k+i < (r-l+1) ? i : (r-i*k);
-            size1 = size1 > 0 ? size1 : 0;
-            int size2 = i*k+2*i < (r-l+1) ? i : (r - i*k - i + 1);
-            if (size1 < i)
-                size2 = 0;
-            int size = size1+size2;
-            T *c = new T[size];
-            //merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
-            merge(arr + size1 * (k), size1, arr + size1 * (k+1), size2, c, cmp);
-            k+=2;
-            memcpy(arr+i*(k-2), c, sizeof(T) * size);
-            delete[] c;
+//    while (i < r-l+1){
+//        int k =0;
+//        while( k < (r-l + 1) / i ) {
+//            //int size = 2 * i +i*k < (r-l+1) ? 2*i : (r-i*k +1);
+//            int size1 = i*k+i < (r-l+1) ? i : (r-i*k);
+//            size1 = size1 > 0 ? size1 : 0;
+//            int size2 = i*k+2*i < (r-l+1) ? i : (r - i*k - i + 1);
+//            if (size1 < i)
+//                size2 = 0;
+//            int size = size1+size2;
+//            T *c = new T[size];
+//            //merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
+//            merge(arr + size1 * (k), size1, arr + size1 * (k+1), size2, c, cmp);
+//            k+=2;
+//            memcpy(arr+i*(k-2), c, sizeof(T) * size);
+//            delete[] c;
+//        }
+//        i *= 2;
+//    }
+    while ( i < r - l +1) {
+        int k = 0;
+        while (k < r-l+1){
+            if (k+i >= r-l+1)
+                break;
+
+            int size2 = (k+i*2 > (r-l+1)) ? (r-l+1 - (k+i)) : i;
+            T* c = new T[i + size2];
+            merge(arr+k,i,arr+k+i, size2, c, cmp);
+            memcpy(arr+k, c, sizeof(T) * (size2+i));
+
+            delete [] c;
+            k+= i*2;
         }
-        i *= 2;
+        i*=2;
     }
 }; // i * (k++) < r ? k : r - i * (k)
 //arr + i * (k), i, arr + ( (i * (k+1)) < r ? (k+1) : (r - i * (k+1)) ), i, c, cmp
@@ -113,16 +129,11 @@ int printArr(const T* arr , int size){
 
 int min_Ads(Client* cls, int count){
     mergeSort(cls,0, count-1, IsLessClient);
-    printArr(cls,count);
+    //printArr(cls,count);
     int minAds = 0;
-    int t1=0, t2=0;
+    int t1=-1, t2=-1;
     for (int i = 0; i < count; ++i) {
-        if ( cls[i].time_in == t2) {
-            ++minAds;
-            t1 = t2;
-            t2 = cls[i].time_out;
-        }
-        else if(cls[i].time_in < t2 && cls[i].time_in > t1){
+        if(cls[i].time_in <= t2 && cls[i].time_in > t1){
             ++minAds;
             t1 = t2;
             t2 = cls[i].time_out;
@@ -134,7 +145,7 @@ int min_Ads(Client* cls, int count){
             t1 = cls[i].time_out -1;
             t2 = cls[i].time_out;
         }
-        while (i+1 < count && cls[i].time_out == cls[i+1].time_out)
+        while ( ((i+1) < count) && (cls[i].time_out == cls[i+1].time_out))
             ++i;
 
     }
@@ -144,22 +155,6 @@ int min_Ads(Client* cls, int count){
 
 
 int main() {
-//    int mas1[] = {11,2,5,6,3,8,7,1};
-//    int mas2[3] = {2,4,7};
-//    int mas1[1] = {2};
-//    int mas2[1] = {1};
-//    int* c = new int[2];
-//    merge<int>(mas1, 1, mas2, 1, c, IsLess<int>() );
-//    for (int i = 0; i<2; ++i)
-//        cout << c[i] << ' ';
-//    delete [] c;
-//    mergeSort(mas1,0,3, IsLess<int>());
-//    for (int i = 0; i<4; ++i)
-//        cout << mas1[i] << ' ';
-//    mergeSort<int>(mas1,0,7,IsLess<int>() );
-//    for (int i = 0; i<8; ++i)
-//        cout << mas1[i] << ' ';
-
     int count = 0;
 
     cin >> count;
@@ -169,7 +164,13 @@ int main() {
     for (int i = 0; i < count; ++i) {
         cin >> cls[i].time_in >> cls[i].time_out;
     }
-
+//    int k = 0;
+//    for (int i = 0; i < count ; ++i) {
+//        cls[i].time_in = k;
+//        cls[i].time_out = k+1;
+//        k += 2;
+//    }
+    //printArr(cls,count);
 
     cout << min_Ads(cls,count) << endl;
     delete [] cls;
