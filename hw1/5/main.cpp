@@ -46,7 +46,7 @@ void mergeSort(T* arr, int l, int r,Compare cmp)
     if (r == l)
         return;
     if (r - l == 1){
-        if(arr[r] < arr[l])
+        if ( cmp(arr[r], arr[l]) )
             swap(arr[r],arr[l]);
         return;
     }
@@ -60,7 +60,7 @@ void mergeSort(T* arr, int l, int r,Compare cmp)
             T *c = new T[size];
             merge(arr + i * (k), i, arr + i * (k+1), (i * (k+1)) < r ? i : (r - i * (k+1)+1), c, cmp);
             k+=2;
-            memcpy(arr+i*(k-2), c, sizeof(T) * 2 * i);
+            memcpy(arr+i*(k-2), c, sizeof(T) * size);
             delete[] c;
         }
         i *= 2;
@@ -73,12 +73,54 @@ class IsLess{
 public:
     bool operator () (const T& l, const T& r) {return l < r;}
 private:
-
 };
 
+class Client {
+public:
+    Client(): time_in(0), time_out(0) {}
+    int time_in;
+    int time_out;
+    Client& operator = (const Client& other){
+        this->time_in = other.time_in;
+        this->time_out = other.time_out;
+    }
+
+    friend std::ostream& operator << (std::ostream& os, Client const& obj){
+        return os << obj.time_in << ' ' << obj.time_out << " ; ";
+    }
+};
+
+bool IsLessClient (const Client& obj1,const Client& obj){
+    if (obj1.time_out < obj.time_out)
+        return true;
+    if (obj1.time_out == obj.time_out)
+        return obj1.time_in < obj.time_in;
+    else return false;
+}
+
+int readClients(Client* arr , int size){
+
+}
+
+int min_Ads(Client* cls, int count){
+    mergeSort(cls,0, count-1, IsLessClient);
+    int minAds = 0;
+    for (int i = 0; i < count; ++i) {
+        if (i-1 >= 0 && cls[i].time_in <= cls[i-1].time_out)
+            ++minAds;
+        else
+            minAds+=2;
+        while (i+1 < count && cls[i].time_out == cls[i+1].time_out)
+            ++i;
+    }
+    return minAds;
+}
+
+
+
 int main() {
-    int mas1[] = {11,2,5,6,3,8,7,1};
-    int mas2[3] = {2,4,7};
+//    int mas1[] = {11,2,5,6,3,8,7,1};
+//    int mas2[3] = {2,4,7};
 //    int mas1[1] = {2};
 //    int mas2[1] = {1};
 //    int* c = new int[2];
@@ -89,8 +131,19 @@ int main() {
 //    mergeSort(mas1,0,3, IsLess<int>());
 //    for (int i = 0; i<4; ++i)
 //        cout << mas1[i] << ' ';
-    mergeSort<int>(mas1,0,7,IsLess<int>());
-    for (int i = 0; i<8; ++i)
-        cout << mas1[i] << ' ';
+//    mergeSort<int>(mas1,0,7,IsLess<int>() );
+//    for (int i = 0; i<8; ++i)
+//        cout << mas1[i] << ' ';
+
+    int count = 0;
+
+    cin >> count;
+    Client cls[count];
+    for (int i = 0; i < count; ++i) {
+        cin >> cls[i].time_in >> cls[i].time_out;
+    }
+
+
+    cout << min_Ads(cls,count) << endl;
     return 0;
 }
