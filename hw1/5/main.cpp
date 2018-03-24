@@ -94,24 +94,42 @@ bool IsLessClient (const Client& obj1,const Client& obj){
     if (obj1.time_out < obj.time_out)
         return true;
     if (obj1.time_out == obj.time_out)
-        return obj1.time_in < obj.time_in;
+        return obj1.time_in > obj.time_in;
     else return false;
 }
 
-int readClients(Client* arr , int size){
-
+template<class T>
+int printArr(T* arr , int size){
+    for (int i = 0; i<size; ++i)
+        cout << arr[i] << ' ';
 }
 
 int min_Ads(Client* cls, int count){
     mergeSort(cls,0, count-1, IsLessClient);
+    printArr(cls,count);
     int minAds = 0;
+    int t1=0, t2=0;
     for (int i = 0; i < count; ++i) {
-        if (i-1 >= 0 && cls[i].time_in <= cls[i-1].time_out)
+        if ( cls[i].time_in == t2) {
             ++minAds;
-        else
-            minAds+=2;
+            t1 = t2;
+            t2 = cls[i].time_out;
+        }
+        else if(cls[i].time_in < t2 && cls[i].time_in > t1){
+            ++minAds;
+            t1 = t2;
+            t2 = cls[i].time_out;
+        }
+
+        else if(cls[i].time_in <= t1) ;
+        else {
+            minAds += 2;
+            t1 = cls[i].time_out -1;
+            t2 = cls[i].time_out;
+        }
         while (i+1 < count && cls[i].time_out == cls[i+1].time_out)
             ++i;
+
     }
     return minAds;
 }
@@ -138,12 +156,49 @@ int main() {
     int count = 0;
 
     cin >> count;
-    Client cls[count];
+    if (count <= 0)
+        return 0;
+    Client* cls = new Client[count];
     for (int i = 0; i < count; ++i) {
         cin >> cls[i].time_in >> cls[i].time_out;
     }
 
 
     cout << min_Ads(cls,count) << endl;
+    delete [] cls;
     return 0;
 }
+
+/*
+4
+1 25
+3 10
+9 10
+9 14
+2
+
+5
+1 10
+10 12
+1 10
+1 10
+23 24
+5
+
+5
+1 5
+5 8
+1 8
+3 10
+6 13
+4
+
+
+5
+1 5
+5 8
+1 8
+3 10
+5 13
+3
+*/
