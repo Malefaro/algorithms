@@ -5,11 +5,11 @@
 #include <assert.h>
 using namespace std;
 
-unsigned char get_digit (unsigned long long num, int r)
+int get_digit (unsigned long long num, int r)
 {
 	// cout << "num= " << bitset<64> (num) << endl;
 	// cout << "num >> 8*r= " << bitset<8> (num>> 8*r) << endl;
-	return (unsigned char)((num >> (8*r)) & 255);
+	return ((num >> (8*r)) & 255);
 }
 
 /* создаем массив = количеству элементов (n)
@@ -24,20 +24,20 @@ unsigned char get_digit (unsigned long long num, int r)
 
 void countSort (unsigned long long* arr, int size)
 {
-	for (int i = 0; i < 8; ++i){
-		unsigned char* data = new unsigned char [size];
+	for (int i = 0; i < sizeof(unsigned long long); ++i){
+		int* data = new int [size];
 		for (int j = 0; j < size; ++j)
 			data[j] = get_digit(arr[j],i);
-        unsigned char minV = data[0];
-        unsigned char maxV = data[0];
+        int minV = data[0];
+        int maxV = data[0];
         for (int j = 0; j < size; ++j){
             minV = min(minV, data[j]);
             maxV = max(maxV, data[j]);
         }
         int valuesCount = maxV - minV + 1;
 
-        unsigned char* valuesData = new unsigned char[valuesCount];
-        memset(valuesData, 0, valuesCount*sizeof(unsigned char));
+        int* valuesData = new int[valuesCount];
+        memset(valuesData, 0, valuesCount*sizeof(int));
         for (int j = 0; j < size; ++j) {
             valuesData[data[j] - minV]++;
         }
@@ -89,7 +89,7 @@ int main (int argc, char *argv[]){
 //    cout << bitset<8>(get_digit(n2, 5))<<endl;
 //    cout << bitset<8>(get_digit(n2, 6))<<endl;
 //    cout << bitset<8>(get_digit(n2, 7))<<endl;
-//	unsigned unsigned char c = 132;
+//	unsigned int c = 132;
 //	cout << int(c) << endl;
     delete [] arr;
 
