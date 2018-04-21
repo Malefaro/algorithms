@@ -7,43 +7,6 @@ using namespace std;
 #define DefaultSize 8
 #define MaxAlpha 0.75
 
-template<class T>
-const T& defaultHFunc(const T& key)
-{
-    cout << key.data() << endl;
-    return key.data();
-}
-
-template<class T>
-class DefaultH{
-    const T& operator() (const T& key){
-        return key.data();
-    }
-};
-
-
-
-//template <class T>
-//int Hash1(const T& data, int tableSize)
-//{
-//    int hash = 0;
-//    for (int i = 0; i < data.size(); ++i){
-//        hash = (hash*127 + data[i]) % tableSize;
-//    }
-//    return hash;
-//}
-//
-//template <class T>
-//int Hash2(const T& data, int tableSize)
-//{
-//    int hash = 0;
-//    for (int i = 0; i < data.size(); ++i){
-//        hash = (hash*37 + data[i]) % tableSize;
-//    }
-//    return (hash*2+1) % tableSize;
-//}
-
-
 template <class T>
 class Hash1
 {
@@ -119,6 +82,13 @@ public:
     bool Has(const T& data);
     bool Add(const T& data);
     bool Delete(const T& data);
+    void show(){
+        for (const auto& object : _table){
+            if ( object != nullptr && !object->IsDel)
+                cout << object->Data << " ";
+        }
+        cout << endl;
+    }
 
 private:
     size_t _tableSize; // максимальный размер таблицы
@@ -183,7 +153,7 @@ bool HashTable<T, FirstHash, SecondHash>::Delete(const T &data) {
 
             return true;
         }
-        h1 = (h1+h2)% _size;
+        h1 = (h1+h2)% _tableSize;
         ++i;
     }
     return false;
@@ -201,35 +171,6 @@ void HashTable<T, FirstHash, SecondHash>::growTable() {
     }
 
 }
-
-class A
-{
-public:
-    A()
-    {
-        cout << "A" << endl;
-    }
-    void operator()(int a, int b){
-        cout << "LOL : " << a << " " << b << endl;
-    }
-};
-
-void B (int a, int b)
-{
-    cout << a << " " << b << endl;
-    return;
-}
-
-template <class H>
-class abra
-{
-public:
-    abra()
-    {
-        H kek;
-        kek(11,12);
-    }
-};
 
 
 class Test
@@ -303,8 +244,56 @@ int main() {
             cout << (table.Delete(word) ? "OK" : "FAIL") << endl;
         if ( operation == '?')
             cout << (table.Has(word) ? "OK" : "FAIL") << endl;
+        if ( operation == '[')
+            table.show();
     }
-
     return 0;
 }
 
+/*
+ + a
+ + b
+ + q
+ + w
+ + e + r + t + y + u + i + o + p + aa + s + d + f + g + h + j + k + l + z + x + c + v + bb + n + m
+
+  - a
+ - b
+ - q
+ - w
+ - e - r - t - y - u - i - o - p - aa - s - d - f - g - h - j - k - l - z - x - c - v - bb - n - m
+
+  ? a
+ ? b
+ ? q
+ ? w
+ ? e ? r ? t ? y ? u ? i ? o ? p ? aa ? s ? d ? f ? g ? h ? j ? k ? l ? z ? x ? c ? v ? bb ? n ? m
+
+ + a + b + c + aa + bb
+ ? aa ? bb
+
+
+ +a
+OK
++a
+FAIL
++a
+FAIL
++a
+FAIL
+?a
+OK
+-a
+OK
+?a
+FAIL
++a
+OK
+?a
+OK
+-a
+OK
+-a
+
+ Process finished with exit code 136 (interrupted by signal 8: SIGFPE)
+ */
