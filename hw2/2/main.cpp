@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stack>
+#include <queue>
 using namespace std;
 
 template <class T>
@@ -30,6 +31,25 @@ private:
 public:
     BinaryTree():root(nullptr) {}
     explicit BinaryTree(Node* obj) : root(obj){}
+    ~BinaryTree() {
+        queue<Node *> tmp;
+        if (root != nullptr) {
+            tmp.push(root);
+        }
+
+        while (!tmp.empty()) {
+            Node *cur = tmp.front();
+            if (cur->left != nullptr) {
+                tmp.push(cur->left);
+            }
+            if (cur->right != nullptr) {
+                tmp.push(cur->right);
+            }
+
+            delete cur;
+            tmp.pop();
+        }
+    }
     void Add(T& obj);
     void pre_order_print(Node* root);
     Node* root;

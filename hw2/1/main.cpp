@@ -37,6 +37,7 @@ private:
     size_t hash;
 };
 
+
 template <class T>
 class Hash2
 {
@@ -64,6 +65,8 @@ public:
 private:
     size_t hash;
 };
+
+
 
 template <class T, class FirstHash = Hash1<T>, class SecondHash = Hash2<T> >
 class HashTable{
