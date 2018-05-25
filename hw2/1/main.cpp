@@ -71,15 +71,17 @@ private:
 template <class T, class FirstHash = Hash1<T>, class SecondHash = Hash2<T> >
 class HashTable{
 private:
-    class Node {
-    public:
-        Node(const T& data): Data(data), IsDel(false) {}
-        T Data;
-        bool IsDel;
-    };
-
+//    class Node {
+//    public:
+//        Node(const T& data): Data(data), IsDel(false) {}
+//        T Data;
+//        bool IsDel;
+//    };
+    T DelVal;
+    T NilVal;
 public:
-    HashTable() : _tableSize(DefaultSize) , _size(0), _table(_tableSize, nullptr){}
+    HashTable() : _tableSize(DefaultSize) , _size(0), _table(_tableSize, NilVal){}
+    HashTable(T del, T nil) : _tableSize(DefaultSize) , _size(0), _table(_tableSize, NilVal), DelVal(del), NilVal(nil){}
     ~HashTable() = default;
 
     bool Has(const T& data);
@@ -87,8 +89,8 @@ public:
     bool Delete(const T& data);
     void show(){
         for (const auto& object : _table){
-            if ( object != nullptr && !object->IsDel)
-                cout << object->Data << " ";
+            if ( object != NilVal && object != DelVal)
+                cout << object << " ";
         }
         cout << endl;
     }
@@ -96,7 +98,7 @@ public:
 private:
     size_t _tableSize; // максимальный размер таблицы
     size_t _size; // сколько элементов лежит
-    vector<Node*> _table;
+    vector<T> _table;
     void growTable();
 };
 
@@ -105,8 +107,8 @@ bool HashTable<T, FirstHash, SecondHash>::Has(const T &data) {
     size_t h1 = FirstHash(data, _tableSize);
     size_t h2 = SecondHash(data, _tableSize);
     size_t i = 0;
-    while(_table[h1] != nullptr && i < _tableSize){
-        if(_table[h1]->Data == data && !_table[h1]->IsDel)
+    while(_table[h1] != NilVal && i < _tableSize){
+        if(_table[h1] == data && _table[h1] != DelVal)
             return true;
         h1 = (h1+h2)% _tableSize;
         ++i;
@@ -122,11 +124,11 @@ bool HashTable<T, FirstHash, SecondHash>::Add(const T &data) {
     size_t h2 = SecondHash(data, _tableSize);
     size_t i = 0;
     long deletedIndex = -1;
-    while ( _table[h1] != nullptr && i < _tableSize){
-        if ( _table[h1]->Data == data && !_table[h1]->IsDel)
+    while ( _table[h1] != NilVal && i < _tableSize){
+        if ( _table[h1] == data && _table[h1] != DelVal)
             return false;
 
-        if (_table[h1]->IsDel && deletedIndex < 0)
+        if (_table[h1] == DelVal && deletedIndex < 0)
             deletedIndex = h1;
 
         h1 = (h1 + h2) % _tableSize;
@@ -134,11 +136,11 @@ bool HashTable<T, FirstHash, SecondHash>::Add(const T &data) {
     }
 
     if (deletedIndex >=0 ){
-        _table[deletedIndex]->Data = data;
-        _table[deletedIndex]->IsDel = false;
+        _table[deletedIndex] = data;
+        //_table[deletedIndex]->IsDel = false;
 
     } else{
-        _table[h1] = new Node(data);
+        _table[h1] = data;
     }
     ++_size;
     return true;
@@ -149,9 +151,9 @@ bool HashTable<T, FirstHash, SecondHash>::Delete(const T &data) {
     size_t h1 = FirstHash(data, _tableSize);
     size_t h2 = SecondHash(data, _tableSize);
     size_t i = 0;
-    while(_table[h1] != nullptr && i < _tableSize){
-        if (_table[h1]->Data == data && !_table[h1]->IsDel ){
-            _table[h1]->IsDel = true;
+    while(_table[h1] != NilVal && i < _tableSize){
+        if (_table[h1] == data && _table[h1] != DelVal ){
+            _table[h1] = DelVal;
             --_size;
 
             return true;
@@ -164,13 +166,13 @@ bool HashTable<T, FirstHash, SecondHash>::Delete(const T &data) {
 
 template <class T, class FirstHash, class SecondHash>
 void HashTable<T, FirstHash, SecondHash>::growTable() {
-    vector<Node*> buf = _table;
+    vector<T> buf = _table;
     _tableSize *= 2;
     _table.clear();
     _table.resize(_tableSize, nullptr);
     for (const auto& object : buf){
-        if ( object != nullptr && !object->IsDel)
-            Add(object->Data);
+        if ( object != NilVal && object != DelVal)
+            Add(object);
     }
 
 }
@@ -237,7 +239,7 @@ int main() {
 //    h.test("asd", defaultHFunc<string>);
 //    abra<A> aqw;
 
-    HashTable<string> table;
+    HashTable<string> table("DEL", "NIL");
     char operation;
     string word;
     while(cin >> operation >> word) {
@@ -298,5 +300,4 @@ OK
 OK
 -a
 
- Process finished with exit code 136 (interrupted by signal 8: SIGFPE)
  */
