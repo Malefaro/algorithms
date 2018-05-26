@@ -10,6 +10,8 @@ using std::vector;
 using std::cout;
 using std::queue;
 
+#ifndef __IGRAPH__
+#define __IGRAPH__
 struct IGraph {
     virtual ~IGraph() {}
 
@@ -20,6 +22,7 @@ struct IGraph {
     virtual void GetNextVertices(int vertex, std::vector<int>& vertices) const = 0;
     virtual void GetPrevVertices(int vertex, std::vector<int>& vertices) const = 0;
 };
+#endif // __IGRAPH__
 
 class ListGraph : public IGraph {
 public:

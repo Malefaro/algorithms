@@ -8,6 +8,9 @@
 
 using namespace std;
 
+
+#ifndef __IGRAPH__
+#define __IGRAPH__
 struct IGraph {
     virtual ~IGraph() {}
     virtual void AddEdge(int from, int to) = 0;
@@ -15,6 +18,7 @@ struct IGraph {
     virtual void GetNextVertices(int vertex, std::vector<int>& vertices) const = 0;
     virtual void GetPrevVertices(int vertex, std::vector<int>& vertices) const = 0;
 };
+#endif
 
 class MatrixGraph : public IGraph{
 public:

@@ -37,7 +37,7 @@ MatrixGraph::MatrixGraph(const IGraph &graph) {
 }
 
 MatrixGraph::MatrixGraph(int size) {
-    Matrix.resize(size);
-    for ( auto obj : Matrix)
-        obj.resize(size, false);
+    Matrix.resize(size, vector<bool>(size,false));
+//    for ( auto obj : Matrix)
+//        obj.resize(size, false);
 }
