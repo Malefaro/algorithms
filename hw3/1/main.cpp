@@ -2,7 +2,10 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
-#include "ListGraph.hpp"
+#include "SetGraph.hpp"
+//#include "MatrixGraph.hpp"
+//#include "ListGraph.hpp"
+//#include "ArcGraph.hpp"
 
 using namespace std;
 
@@ -74,30 +77,31 @@ int findMin(const IGraph& graph, int u,int w,int n, int v)
     while (!qu.empty()) {
         int current = qu.front();
         qu.pop();
-        std::vector<int> adjacentVertices;
-        graph.GetNextVertices(current, adjacentVertices);
+        if(!visited[current]) {
+            std::vector<int> adjacentVertices;
+            graph.GetNextVertices(current, adjacentVertices);
 
-        for (auto &obj : adjacentVertices) {
+            for (auto &obj : adjacentVertices) {
 //            cout << obj << " first: " << LongPath[obj].first << " second: "<<LongPath[obj].second<< endl;
 //            cout << current << " first: " << LongPath[current].first << " second: "<<LongPath[current].second<< endl;
-            if (LongPath[obj].first - 1 > LongPath[current].first) {
-                LongPath[obj].first = LongPath[current].first + 1;
-                LongPath[obj].second = LongPath[current].second;
-            }
-            else if (LongPath[obj].first == -1) {
-                LongPath[obj].first = LongPath[current].first + 1;
-                LongPath[obj].second = LongPath[current].second;
-            }
-            else if (LongPath[obj].first - 1 == LongPath[current].first)
-                LongPath[obj].second += LongPath[current].second;
-
-
-            if (!visited[current]) {
+                if (LongPath[obj].first - 1 > LongPath[current].first) {
+                    LongPath[obj].first = LongPath[current].first + 1;
+                    LongPath[obj].second = LongPath[current].second;
+                } else if (LongPath[obj].first == -1) {
+                    LongPath[obj].first = LongPath[current].first + 1;
+                    LongPath[obj].second = LongPath[current].second;
+                } else if (LongPath[obj].first - 1 == LongPath[current].first)
+                    LongPath[obj].second += LongPath[current].second;
                 qu.push(obj);
-                visited[obj] = true;
+
+//                if (!visited[current]) {
+//                    qu.push(obj);
+//                    visited[obj] = true;
+//                }
             }
+            visited[current] = true;
         }
-        cout << endl;
+        //cout << endl;
 
     }
 
@@ -109,7 +113,7 @@ int main() {
 
     int n = 0, v = 0;
     std::cin >> v >> n;
-    ListGraph graph(v);
+    SetGraph graph(v);
     for (int i = 0 ; i < n; ++i) {
         int from, to;
         std::cin >> from >> to;
